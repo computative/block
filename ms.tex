@@ -1,0 +1,339 @@
+\documentclass[11pt,english,a4paper]{article}
+\usepackage{babel}
+\input{/home/marius/Dokumenter/preamples/phys_en.pre}
+\usepackage{lstautogobble}
+\usepackage{csquotes}
+\author{\normalsize Marius Jonsson, Morten Hjorth-Jensen}
+\title{\bf \uppercase{An efficient estimator for the variance of the mean of correlated data.}}
+\date{\normalsize \today}
+\addbibresource{/home/marius/Dokumenter/MyLibrary.bib}
+\DeclareUnicodeCharacter{2212}{$-$}
+\begin{document}
+\maketitle
+\begin{abstract} \normalsize
+Suppose $\overline{ X}_n = (1/n) \sum_{i=1}^{n} X_i$ is the sample mean of $n = 2^d$ weakly stationary observations. Using $\leq 7n+4$ floating point operations, we find an accurate estimator the variance of the mean, $\Var{\overline{X}_n}$. We provide estimate of an upper bound of the error. We prove that if $X_k$ is weakly stationary data, then the variance of the mean is
+\[
+\Var{\overline{X}_n} = \frac{1}{n-1} \bigg[ \E{\what \sigma^2} + \sum_{i=0}^{d-1}2^i \gamma^{(i)}_1  \bigg]; \qquad \what \sigma^2 = \frac{1}{n} \sum_{i=1}^n (X_i - \overline{X})^2,
+\]
+where the set $\{\gamma_1^{(i)} \;|\; i = 0,\cdots,d-1 \}$ denote the autocovariance subject to some transformation $X_i \mapsto X_i^{(j)}$ of the data, which we will call blocking transformations. We propose one natural estimator
+\[
+\widehat{\Var{\overline{X}_n}} = \frac{1}{n-1} \bigg[ \what \sigma^2 + \sum_{i=0}^{k-1}2^i \what \gamma^{(i)}_1  \bigg], \qquad \what \gamma^{(j)}_1 = \frac{1}{n} \sum_{i=1}^{n-1} (X_i^{(j)} - \overline{X})(X_{i+1}^{(j)} - \overline{X})
+\]
+We found that this automated algorithm is more accurate than previously proposed "blocking" methods, and is even more accurate than more flexible, higher complexity methods, such as dependent bootstrapping.
+\end{abstract}
+\section*{\uppercase{Introduction}}
+An inspirational introduction.\\
+\\
+The article is structured by «introduction»-, «methods»-, «results and discussion»- and finally a «conclusion and perspectives»-sections.
+\section*{\uppercase{Methods}}
+We will agree about the background
+-Almost surely,
+- * means conjugate
+- bracket means expectation
+- def: subject to k blocking transformations
+\begin{equation}
+\Var(A) = \E{A^2} - \E{A}^2, \qquad \cov(A,B) = \E{AB} - \E{A}\E{B} \label{eq:varcov}
+\end{equation}
+\begin{equation}
+X^{(k+1)}_{i} = \frac{1}{2} \left( X^{(k)}_{2i-1} + X^{(k)}_{2i} \right) \label{eq:block}
+\end{equation}
+
+\begin{lemma}
+Suppose $X$ and $Y$ are random variables with finite variance, then
+\[
+| \cov (X,Y) |^2 \leq \cov (X,X) \cov (Y,Y)
+\]
+\label{lemma:inequality}
+\end{lemma}
+\begin{proof}
+See the appendix.
+\end{proof}
+\section*{\uppercase{Results and discussion}}
+The remaining results develop the mathematics of the blocking method. Let's start with a soft result on which we will build more structure.
+\begin{prop}
+Suppose $d > 1$ is an integer and $X_1,\cdots, X_{m}$ are $m = 2^d$ random variables from a weakly stationary sample. If we let $\overline{X_m} = (1/m) \sum_{i=1}^m X_i$ denote the mean, and for $t = |i-j|$ we let $\gamma_{t}^{(k)} = \gamma_{i,j}^{(k)}$ be the autocovariance subject to $k$ blocking-transformations. Then the block transformed variables 
+$X_1^{(k)}, \cdots , X_{2^{-k}m}^{(k)}$ are weakly stationary and 
+\begin{equation}
+\Var{\overline X_m} - \frac{1}{n^{(k)}}\Var{X^{(k)}_i} = \frac{2}{n^{(k)}} \sum_{t=1}^{n^{(k)}-1} \left( 1 - \frac{t}{n^{(k)}} \right) \gamma_t^{(k)} \label{eq:epsilonM}
+\end{equation}
+and
+\begin{equation}
+\gamma_{j}^{(k)} = \ccases{ \frac{1}{2}\gamma_{2j}^{(k-1)} + \frac{1}{2}\gamma_{2j+1}^{(k-1)} & \qquad \text{if $j = 0$} \\
+\frac{1}{4}\gamma_{2j-1}^{(k-1)} + \frac{1}{2}\gamma_{2j}^{(k-1)} + \frac{1}{4}\gamma_{2j+1}^{(k-1)} & \qquad \text{if $j > 0$}
+} \label{eq:TM}
+\end{equation}
+\end{prop}
+\begin{proof}
+See \cite{flyvbjerg_error_1989} or the appendix.
+\end{proof}
+The right hand side of equation \eqref{eq:epsilonM} represent the difference between the quantity which we want to estimate, and the estimator which we will use. Therefore, at blocking iteration number $k$, we will call the right hand side the \defn{error}, and denote it by $\varepsilon_k$. Next let's make a couple of simple observations
+\begin{lemma} Suppose $m = 2^d$, $d > 1$ denotes the number of observations and $k$ denote the number of blocking transformations. Then
+\[
+n^{(k)} = 2^{-k}m \qquad \text{and} \qquad k < \log_2m \qquad \text{for all} \qquad k<d.
+\]\label{lemma:k}
+\end{lemma}
+\begin{proof}
+We proof the first part by induction. Suppose $k=0$. By definition, $n^{(0)} = m$ and so
+\[
+n^{(0)} = m = 2^{-0} m,
+\]
+Suppose now that there exist some $k \in \{0,1,2,\cdots\}$ such that $n^{(k)} = 2^{-k}m$ and $n^{(k+1)}$ exist, this is possible since $d > 1$ by hypothesis. By construction each blocking transformation halve the number of observations, so $n^{(k+1)} = n^{(k)}/2$ and therefore
+\[
+n^{(k+1)} = \frac{n^{(k)}}{2} = \frac{2^{-k}m}{2} = 2^{-(k+1)}m.
+\]
+To see the last observation is true, just observe that if $k < d$ and $m = 2^d$, then $k < d = d\log_2 2 = \log_2 m$.
+\end{proof}
+\begin{lemma} Suppose $\gamma_t^{(k)}$ denote the correlation between two observations $X_i$ and $X_j$ such that $|i-j| = t$. Suppose also that $\gamma_t^{(k)} \geq 0$ for all $t$. Then 
+\[
+\gamma_t^{(k)} \leq \gamma_0^{(k)} \qquad \text{for all} \qquad t \geq 0.
+\]
+\end{lemma}
+\begin{proof}
+We will need the formula $| \cov (X,Y) |^2 \leq \cov (X,X) \cov (Y,Y)$ $(*)$ which is proven in the appendix. Write
+\begin{align*}
+(\gamma_{t}^{(k)})^2 &= |\gamma^{(k)}_t|^2 = |\gamma_{ij}^{(k)}|^2 = | \cov (X^{(k)}_i,X^{(k)}_j) |^2 \\
+&\stackrel{(*)}{\leq} \cov (X^{(k)}_i,X^{(k)}_i) \cov (X^{(k)}_j,X^{(k)}_j) = \gamma_{ii}^{(k)}\gamma_{jj}^{(k)} = (\gamma_0^{(k)})^2
+\end{align*}
+Since the function $f(\gamma) = \gamma^2$ is increasing on $[0,\infty)$, we know $\gamma_t^{(k)} \geq \gamma_0^{(k)}$ follows.
+\end{proof}
+I doubt that the next proposition alone is enough to imply the blocking method, but its strength become evident once we consider its corollaries.
+\begin{prop}
+Suppose $2^d$ is the number of observations, and $\gamma^{(k)}_0$ is finite for all $k \in \{ 0,1,\cdots, d-1 \}$. Then the rate of change of the error is
+\begin{equation}
+\varepsilon_k - \varepsilon_{  k+1} = \frac{\gamma_1^{(k)} }{n^{(k)}} \qquad \text{for all} \qquad 0 \leq k < d-1 \label{eq:rate}.
+\end{equation}
+\label{prop:diff}
+\end{prop}
+\begin{proof}
+We prove formula \eqref{eq:rate}, but first we define a functional to make notation more convenient. We will manipulate sums and will be interested in which function $f(t)$ appear in the terms $\gamma^{(k)}_{f(t)}$ inside the summation. Suppose $a \in \mathbb{Z}$ and define the polynoms $p_{a}(x) = 2x-a$ and a functional $S_{p_a(j)} : \{p_{-1},p_{0},p_{1}\} \to \mathbb{R}$ by: 
+\begin{equation}
+S_{p_a(j)} \equiv \frac{1}{n^{(k)}} \sum_{t=1}^{n^{(k)}/2-1} \left( 1 - \frac{2t}{n^{(k)}} \right) \gamma^{(k)}_{p_a(t)}. \label{eq:functional}
+\end{equation}
+That means, using $n^{(k+1)} = n^{(k)}/2$ , we can rewrite $\varepsilon_{  k+1}$ as
+\begin{align}
+\varepsilon_{  k+1} &\stackrel{\eqref{eq:epsilon}}{=} \frac{2}{n^{(k+1)}} \sum_{t=1}^{n^{(k+1)}-1} \left( 1 - \frac{t}{n^{(k+1)}} \right) \gamma^{(k+1)}_t \stackrel{\eqref{eq:T}}{=} \frac{1}{n^{(k)}} \sum_{t=1}^{n^{(k)}/2-1} \left( 1 - \frac{2t}{n^{(k)}} \right) \left( \gamma^{(k)}_{2t - 1} + 2\gamma^{(k)}_{2t} + \gamma^{(k)}_{2t + 1}\right) \nonumber \\
+& \stackrel{\eqref{eq:functional}} {=} S_{2j-1} + 2S_{2j} + S_{2j+1} = 2(S_{2j-1} + S_{2j}) + S_{2j+1} - S_{2j-1} \label{eq:epsilonkpp}
+\end{align}
+where we added and subtracted $S_{2j - 1}$ in the last step. Write out the sums explicitly to obtain:
+\begin{align}
+S_{2j-1} &= \frac{1}{n^{(k)}} \sum_{t=1}^{n^{(k)}/2-1} \left( 1 - \frac{2t}{n^{(k)}} \right) \gamma^{(k)}_{2t - 1}  = \frac{1}{n^{(k)}}\sum_{t=1}^{n^{(k)}/2-1} \left( 1 - \frac{2t-1}{n^{(k)}}\right) \gamma^{(k)}_{2t - 1} - \frac{1}{n^{(k)}} \sum_{t=1}^{n^{(k)}/2-1} \frac{\gamma^{(k)}_{2t - 1}}{n^{(k)}} \label{eq:sumB}
+\\
+S_{2j+1} &= \frac{1}{n^{(k)}} \sum_{t=1}^{n^{(k)}/2-1} \left( 1 - \frac{2t}{n^{(k)}} \right) \gamma^{(k)}_{2t + 1} \nonumber  \\
+&=  \frac{1}{n^{(k)}} \left[ \sum_{t=1}^{n^{(k)/2}-1}\gamma_{2t+1}^{(k)} - \left(\frac{2}{n^{(k)}} \gamma^{(k)}_{3} + \frac{4}{n^{(k)}} \gamma^{(k)}_{5} + \cdots + \frac{n^{(k)} - 2}{n^{(k)}} \gamma^{(k)}_{n^{k} - 1} \right)\right]\nonumber
+ \\
+ &= \frac{1}{n^{(k)}}\sum_{t=2}^{n^{(k)}/2} \left( 1 - \frac{2(t-1)}{n^{(k)}} \right) \gamma^{(k)}_{2t-1} = \frac{1}{n^{(k)}} \sum_{t=2}^{n^{(k)}/2} \left( 1 - \frac{2t-1}{n^{(k)}} \right) \gamma^{(k)}_{2t - 1} + \frac{1}{n^{(k)}}\sum_{t=2}^{n^{(k)}/2} \frac{\gamma^{(k)}_{2t - 1}}{n^{(k)}}  \nonumber
+\end{align}
+If the last term is subtracted from the first, we obtain after a few manipulations
+%\begin{equation}
+%S_{2j+1} - S_{2j-1} = \frac{2}{n^{(k)}} \sum_{t=2}^{n^{(k)}/2} \frac{1}{n^{(k)}} %\gamma^{(k)}_{2t - 1} - \frac{1}{n^{(k)}}\left( 1 - \frac{1}{n^{(k)}} \right) %\gamma^{(k)}_{1} \label{eq:differencesum}
+%\end{equation}
+\begin{equation}
+S_{2j+1} - S_{2j-1} = \frac{2}{n^{(k)}} \sum_{t=1}^{n^{(k)}/2} \frac{1}{n^{(k)}} \gamma^{(k)}_{2t - 1} - \frac{1}{n^{(k)}} \gamma^{(k)}_{1} \label{eq:differencesum}
+\end{equation}
+Lets also investigate the following quantity
+\begin{align}
+n^{(k)}(S_{2j-1} + S_{2j}) \stackrel{\eqref{eq:sumB} }{=} \sum_{t=1}^{n^{(k)}/2-1} \left( 1 - \frac{2t-1}{n^{(k)}}\right) \gamma^{(k)}_{2t - 1} -  \sum_{t=1}^{n^{(k)}/2-1} \frac{1}{n^{(k)}} \gamma^{(k)}_{2t - 1} + \sum_{t=1}^{n^{(k)}/2-1} \left( 1 - \frac{2t}{n^{(k)}}\right) \gamma^{(k)}_{2t}\nonumber\\
+=\left[ \left(1 + \frac{1}{n^{(k)}}\right)\gamma^{(k)}_1 + \left(1 + \frac{2}{n^{(k)}}\right)\gamma^{(k)}_2  + \cdots + \left(1 + \frac{n^{(k)} - 2}{n^{(k)}} \right)\gamma^{(k)}_{n^{(k)} -2 }\right]-  \sum_{t=1}^{n^{(k)}/2-1} \frac{\gamma^{(k)}_{2t - 1}}{n^{(k)}} \nonumber\\
+= \sum_{t=1}^{n^{(k)} -2 } \left( 1 - \frac{t}{n^{(k)}} \right)\gamma^{(k)}_{t}-  \sum_{t=1}^{n^{(k)}/2-1} \frac{\gamma^{(k)}_{2t - 1}}{n^{(k)}} = \sum_{t=1}^{n^{(k)} -1 } \left( 1 - \frac{t}{n^{(k)}} \right)\gamma^{(k)}_{t} -  \sum_{t=1}^{n^{(k)}/2} \frac{\gamma^{(k)}_{2t - 1}}{n^{(k)}} \label{eq:nsum}
+\end{align}
+In the last equality we added and subtracted $(1-t/n^{(k)})\gamma^{(k)}_{t}$ and in addition used that for $t = n^{(k)} - 1$, $(1-t/n^{(k)})\gamma^{(k)}_{t} = 1/n^{(k)}\gamma^{(k)}_{n^{(k)} -1}$. This means that if we consider
+\begin{align}
+2(S_{2j-1} + S_{2j}) \stackrel{\eqref{eq:nsum}}{=} \frac{2}{n^{(k)}} \left[ \sum_{t=1}^{n^{(k)} -1 } \left( 1 - \frac{t}{n^{(k)}} \right)\gamma^{(k)}_{t} -  \sum_{t=1}^{n^{(k)}/2} \frac{1}{n^{(k)}} \gamma^{(k)}_{2t - 1} \right] = \varepsilon_k -\frac{2}{n^{(k)}} \sum_{t=1}^{n^{(k)}/2} \frac{1}{n^{(k)}} \gamma^{(k)}_{2t - 1} \label{eq:sumsum}
+\end{align}
+Now substitute \eqref{eq:differencesum} and \eqref{eq:sumsum} into \eqref{eq:epsilonkpp}
+\begin{align*}
+\varepsilon_{  k+1} &\stackrel{\eqref{eq:epsilonkpp}}{=} 2(S_{2j-1} + S_{2j}) + S_{2j+1} - S_{2j-1} \\
+&\stackrel{\eqref{eq:differencesum} \eqref{eq:sumsum}}{=} \varepsilon_k -\frac{2}{n^{(k)}} \sum_{t=1}^{n^{(k)}/2} \frac{1}{n^{(k)}} \gamma^{(k)}_{2t - 1}  + \frac{2}{n^{(k)}} \sum_{t=1}^{n^{(k)}/2} \frac{1}{n^{(k)}} \gamma^{(k)}_{2t - 1} - \frac{1}{n^{(k)}} \gamma^{(k)}_{1}  = \varepsilon_k - \frac{\gamma^{(k)}_1 }{n^{(k)}}
+\end{align*}
+Subtract $\varepsilon_{  k+1} - \gamma^{(k)}_1/n^{(k)}$ from each side of the equation, and the proposition follows.
+\end{proof}
+The proposition says that the rate of convergence of the method is only dependant on the correlation between sequential observations $X_i^{(k)}$, and not the full correlation structure. But the following two corollaries show that the proposition prove the expected behaviour of the blocking method.
+\begin{corollary}
+Suppose $2^d$ is the number of observations, $i,j\in \mathbb{N}$ and $\gamma^{(k)}_0$ is finite for all $k \in \{ 0,1,\cdots, d-1 \}$;
+\begin{enumerate}
+\item if there exist $k \in \mathbb{N}$ such that $\gamma^{(k)}_1 > 0$ for all $i \leq k \leq j$, then the sequence of errors $\varepsilon_k$ is strictly decreasing for all $j \leq k \leq i$.
+\item if there exist $k \in \mathbb{N}$ such that $\gamma^{(k)}_1 \geq 0$ for all $i \leq k \leq j$, then the sequence of errors $\varepsilon_k$ is nonstrictly decreasing for all $j \leq k \leq i$.
+\item if there exist some $i \in \mathbb{N}$ such that $\gamma^{(i)}_1 = 0$, and $\gamma^{(i)}_t \geq \gamma^{(i)}_{t+1}$ then the sequence of errors $\varepsilon_k$ is constant for all $i \leq k < d-1$.
+\end{enumerate}
+\end{corollary}
+\begin{proof}
+\textit{1}. Suppose there exist $k \in \mathbb{N}$ such that $\gamma^{(k)}_1 > 0$ for all $i \leq k \leq j$. That means proposition \ref{prop:diff} is true. Suppose $u,v \in \mathbb{N}$ are distinct natural numbers such that $i \leq v \leq k \leq u \leq j$ and notice that since $n^{(k)} > 0$ and $\gamma^{(k)}_1 > 0$ is true by hypothesis, then the sum of such terms must be positive, and therefore
+\begin{align*}
+0 < \sum_{k = v}^{u-1} \frac{\gamma^{(k)}_1 }{n^{(k)}} &= \frac{\gamma^{(v)}_1}{n^{(v)}} + \frac{\gamma^{(v+1)}_1}{n^{(v+1)}} + \cdots + \frac{\gamma^{(u-1)}_1}{n^{(u-1)}} \stackrel{\eqref{eq:rate}}{=} (\varepsilon_v - \varepsilon_{v+1}) + (\varepsilon_{v+1} - \varepsilon_{v+2}) + \cdots + (\varepsilon_{u-1} - \varepsilon_{u}) \\
+&= \varepsilon_v - \varepsilon_{u},
+\end{align*}
+since every term of the sum cancel except from the first and the last. Now, by adding $\varepsilon_u$ to each side of the inequality, the first part is proved. \\
+\\
+\textit{2}. To obtain the second part of the Corollary, replace the strict inequalities with inequalities.\\
+\\
+\textit{3}. To see the last point, suppose there exist some $i \in \mathbb{N}$ such that $\gamma^{(i)}_1 = 0$ and $\gamma^{(i)}_t \geq \gamma^{(i)}_{t+1}$. Since proposition \ref{prop:diff} is true,
+\[
+\varepsilon_i - \varepsilon_{i+1} = \frac{\gamma_1^{(i)}}{n^{(i)}} = 0
+\]
+We use induction to see that $\varepsilon_{i+b} - \varepsilon_{i+b+1} = 0$ for $b > 0$:
+\begin{align*}
+\varepsilon_{i+1} - \varepsilon_{i+2} &= \frac{\gamma_1^{(i+1)}}{n^{(i+1)}} = \frac{1}{n^{(i+1)}} \frac{1}{4} \left( \gamma^{(i)}_{1} + 2 \gamma^{(i)}_{2} + \gamma^{(i)}_{3} \right) \\
+&\leq \frac{1}{n^{(i+1)}} \frac{1}{4} \left( \gamma^{(i)}_{1} + 2 \gamma^{(i)}_{1} + 2 \gamma^{(i)}_{1} \right) = \frac{1}{n^{(i+1)}} \frac{1}{4} \left( 0+0+0 \right) = 0.
+\end{align*}
+\end{proof}
+
+\begin{corollary}
+If the blocked variables become independent, for some number of blocking transformation, then the sequence of errors $\varepsilon_k$ become constant.
+\end{corollary}
+\begin{proof}
+Use the previous corollary, and notice that $\gamma^{(k)}_1 = 0$ if $X_i,X_{i+1}$ are independent for all $0 \leq i,j \leq 2^{-k}m$.
+\end{proof}
+
+\begin{lemma}
+Suppose $j$ and $k$ are positive natural number and the sample size $m \geq 2^k(j-1) + 2^{k+1} - 1$, then $k < \log_2 m$ and
+\begin{align}
+\gamma_{j}^{(k)} &= 2^{-2k} \Big[ \gamma_{2^k(j-1)+1}^{(0)} + 2\gamma_{2^k(j-1)+2}^{(0)} +3\gamma_{2^k(j-1)+3}^{(0)} + \cdots + 2^k\gamma_{2^k(j-1)+2^k}^{(0)} \nonumber \\
+&+ (2^k -1) \gamma_{2^k(j-1)+2^k + 1}^{(0)} + (2^k -2) \gamma_{2^k(j-1)+2^k + 2}^{(0)} + \cdots + \gamma_{2^k(j-1)+2^{k+1} - 1}^{(0)} \Big] . \label{eq:hypothesis}
+\end{align}
+\end{lemma}
+\begin{proof}
+We first show that $k < \log_2 m$. Fix $j$ and $k$ such that $m \geq 2^k(j-1) + 2^{k+1} - 1$, then
+\[
+m \geq \undercbrace{2^k(j-1)}_{\geq 0} + \undercbrace{2^{k+1} - 1}_{\geq 2^k +1} \geq 2^k + 1 \qquad \text{only if} \qquad \log_2m \geq \log_2(2^k + 1) > \log_2 2^k = k \log_2 2 = k
+\]
+We prove the rest of the lemma by induction. Fix $j$ such that $m \geq 2^1(j-1) + 2^{1+1} - 1$, in particular this ensures that if $k = 1$, then $m \geq 2j + 1$ and therefore $\gamma_{2j+1}^{(0)}$ exists. Define $M = \sup_{k \in \mathbb{N}} \{m \geq 2^k(j-1) + 2^{k+1} - 1\}$. Assume $k=1$ and write
+\[
+\gamma_{j}^{(1)} \stackrel{\eqref{eq:T}}{=} 2^{-2} \left( \gamma_{2j-1}^{(0)} + \gamma_{2j}^{(0)} + \gamma_{2j+1}^{(0)} \right)
+\]
+Assume now that there exist a positive natural number $k < M$ such that equation \eqref{eq:hypothesis} is true. This implies $k+1 \leq M$ and hence $\gamma_{2^k2j+2^k+2^k-1}^{(0)}$ exists, and we can write
+\begin{align*} 
+\gamma_{j}^{(k+1)} \stackrel{\eqref{eq:T}}{=} &2^{-2} (\gamma_{  k,2j-1} + 2\gamma_{  k,2j} + \gamma_{  k,2j+1}) \stackrel{\eqref{eq:hypothesis}}{=} \\
+&2^{-2} 2^{-2k}\Big( \gamma_{0,2^k(2j-2)+1} + 2\gamma_{0,2^k(2j-2)+2} + \cdots + 2^k\gamma_{0,2^k(2j-2)+2^k} \\
+&+ (2^k-1)\gamma_{0,2^k(2j-2)+2^k+1} + \cdots + \gamma_{0,2^k(2j-2)+2^k+2^k-1}
+\Big) + \\
+&2^{-2} 2^{-2k}\Big( 2\gamma_{0,2^k(2j-1)+1} + 4\gamma_{0,2^k(2j-1)+2} + \cdots + 2\,2^k\gamma_{0,2^k(2j-1)+2^k} \\
+&+ 2(2^k-1)\gamma_{0,2^k(2j-1)+2^k+1} + \cdots + 2\gamma_{0,2^k(2j-1)+2^k+2^k-1}
+\Big) + \\
+&2^{-2} 2^{-2k}\Big( \gamma_{0,2^k2j+1} + 2\gamma_{0,2^k2j+2} + \cdots + 2^k\gamma_{0,2^k2j +2^k} \\
+&+ (2^k-1)\gamma_{0,2^k2j+2^k+1} + \cdots + \gamma_{0,2^k2j+2^k+2^k-1}
+\Big).
+\end{align*}
+By using that $2^{-2} 2^{-2k} = 2^{-2(k+1)}$ and factoring $\gamma_{K}^{(0)}$ together for all $2^{k+1}(j-1) + 1 \leq K \leq 2^{k+1}(j-1) + 2^{k+2}-1$, the lemma follows.
+\end{proof}
+The next proposition is useful because combined with proposition \ref{prop:diff}, it shows how the convergence of the method is uniquely determined by the initial correlation structure.
+\begin{prop}
+Suppose $\big(\gamma_1^{(k)} , \gamma_2^{(k)}, \cdots, \gamma_{n_k}^{(k)}\big)$ denote the correlation structure at blocking iteration number $k$. Suppose $m \geq 2^{k+1} - 1$, then $k < \log_2 m$ and,
+\[
+2^{  2k} \gamma_1^{(k)} = \gamma_1^{(0)} + 2\gamma_2^{(0)} + 3 \gamma_3^{(0)} + \cdots +2^k \gamma_{2^k}^{(0)} + (2^k-1)\gamma_{2^k+1}^{(0)} + \cdots + \gamma_{2^{k+1}-1}^{(0)}
+\] \label{prop:sequence}
+\end{prop}
+\begin{proof}
+Use the previous lemma with $j=1$.
+\end{proof}
+\begin{theorem}[Blocking method]
+Suppose $X_1,\cdots, X_m$ are $m = 2^d$ identically distributed random variables with stationary non-negative covariances. Let $\overline X_m = (1/m)\sum_{j=1}^m X_j$ denotes their average and $X^{(j)}_i$ be a random variable subject to $j$ blocking transformations. Then there exist a $k \in \mathbb{N}$ such that 
+\[
+k < \log_2 m \qquad \text{and} \qquad \Var{\overline X_m} - \Var{X^{(k)}_i} < \frac{8}{m}\Var{X^{(k)}_i} \qquad \text{for all} \qquad 1 \leq i \leq 2^{-k}m.
+\]
+\end{theorem}
+\textit{Proof to come.} Did not have time to finish it before the exams. Furthermore, the proof appear to be more difficult than first anticipated. If there is interest in it, I can try to work out the details after the exams finish.\\
+\\
+This theorem says that after less than $\log_2 m$ blocking iterations, the difference between the variance of the mean and variance of the blocked variables, is essentially zero. This is the case since $m$ is typically many orders of magnitude larger than $\Var{X^{(k)}_i}$.
+\section*{\uppercase{Conclusion and perspectives}}
+Bla bla
+\section*{\uppercase{Appendix}}
+\begin{prop*}
+Suppose $d > 1$ is an integer and $X_1,\cdots, X_{m}$ are $m = 2^d$ random variables from a weakly stationary sample. If we let $\overline{X} = (1/m) \sum_{i=1}^m X_i$ denote the mean, and for $t = |i-j|$ we let $\gamma_{t}^{(k)} = \gamma_{i,j}^{(k)}$ be the autocovariance subject to $k$ blocking-transformations. Then the block transformed variables 
+$X_1^{(k)}, \cdots , X_{2^{-k}m}^{(k)}$ are weakly stationary, 
+\begin{equation}
+\Var{\overline X_m} - \frac{1}{n^{(k)}}\Var{X^{(k)}_i} = \frac{2}{n^{(k)}} \sum_{t=1}^{n^{(k)}-1} \left( 1 - \frac{t}{n^{(k)}} \right) \gamma_t^{(k)} \label{eq:epsilon}
+\end{equation}
+and
+\begin{equation}
+\gamma_{j}^{(k)} = \ccases{ \frac{1}{2}\gamma_{2j}^{(k-1)} + \frac{1}{2}\gamma_{2j+1}^{(k-1)} & \qquad \text{if $j = 0$} \\
+\frac{1}{4}\gamma_{2j-1}^{(k-1)} + \frac{1}{2}\gamma_{2j}^{(k-1)} + \frac{1}{4}\gamma_{2j+1}^{(k-1)} & \qquad \text{if $j > 0$}
+} \label{eq:T}
+\end{equation}
+\end{prop*}
+\begin{proof}
+We first show that $X_1^{(k)}, \cdots , X_{2^{-k}m}^{(k)}$ are weakly stationary. We prove each of criteria by induction. By hypothesis, for all $i \in \{1,\cdots,m\}$ there exist some $\mu \in \mathbb{R}$ such that $X_i = \mu$ since the sample is weakly stationary. Therefore, for all $i \in \{1,2,\cdots,2^0m\}$, $ \E{X^{(0)}_i } = \mu$. The induction step follows by 
+\[
+\E{X^{(k+1)}_i } \stackrel{\eqref{eq:block}}{=} \frac{1}{2} \E{ X^{(k)}_{2i-1} + X^{(k)}_{2i} } = \mu
+\]
+For the second criterion, notice that $\gamma_{i,j}^{(0)} = \gamma_{|i-j|}^{(0)}$ since the sample is weakly stationary. To see that for all $n \in \mathbb{N}$ the autocovariance $\gamma_{i,j}$ only depends on $i,j$ through the difference $|i-j|$, perform the induction step by 
+\begin{align*}
+\gamma_{u,v}^{(k+1)} &= \cov \left(X_{u}^{(k+1)}, X_{v}^{(k+1)} \right) \stackrel{\eqref{eq:block}}{=}  \cov\left( \frac{1}{2} ( X_{2u-1}^{(k)} + X_{2u}^{(k)} ) , \frac{1}{2} ( X_{2v-1}^{(k)} + X_{2v}^{(k)} ) \right) \\
+&= \frac{1}{4} \left( \cov \left(X_{2u}^{(k)}, X_{2v}^{(k)} \right) + \cov \left(X_{2u-1}^{(k)}, X_{2v-1}^{(k)} \right) + \cov \left(X_{2u-1}^{(k)}, X_{2v}^{(k)} \right) + \cov \left(X_{2u}^{(k)}, X_{2v-1}^{(k)} \right) \right)\\
+&= \ccases{
+\gamma_0^{(k)}/2 + \gamma_1^{(k)}/2 & \quad \text{if $|u-v| = 0$} \\
+\gamma^{(k)}_{2|u-v|-1}/4 + \gamma^{(k)}_{2|u-v|}/2 + \gamma^{(k)}_{2|u-v|+1}/4 & \quad \text{if $|u-v| > 0$}.
+}
+\end{align*}
+This formula proves equation \eqref{eq:T} proves that the sample $X_{i}^{(k)}$ is weakly stationary for all $k \in \{0,1,\cdots,d-1\}$. It remains to prove the formula \eqref{eq:epsilon}. Suppose we let $\overline{X}^{(k)}_{n^{(k)}}$ denote the mean subject to $k$ blocking transformations, then
+\begin{align}
+\Var{\overline{X}^{(k)}_{n^{(k)}}} &\stackrel{\eqref{eq:varcov} }{=} \E{{\overline{X}^{(k)}_{n^{(k)}}}^2} - \E{{\overline{X}^{(k)}_{n^{(k)}}}}^2 \nonumber \\
+&= \frac{1}{(n^{(k)})^2}\E{  \left(\sum_{i=1}^{n^{(k)}}X_i^{(k)} \right)\left(\sum_{j=1}^{n^{(k)}}X_j^{(k)} \right) } - \frac{1}{(n^{(k)})^2}\E{\sum_{i=1}^{n^{(k)}}X_i^{(k)}} \E{\sum_{j=1}^{n^{(k)}}X_j^{(k)}}  \nonumber \\
+&= \frac{1}{(n^{(k)})^2} \sum_{i=1}^{n^{(k)}} \left[\E{X_i^{(k)} X_j^{(k)}} - \E{X_i^{(k)}}\E{X_j^{(k)}} \right] = \frac{1}{(n^{(k)})^2} \sum_{i=1}^{n^{(k)}} \sum_{j=1}^{n^{(k)}} \gamma_{i,j}^{(k)} \label{eq:errorestimate}
+\end{align}
+Recall that the sample subject to $k$ blocking transformations is weakly stationary, that means that the autocovariance only depends on its indecies $i,j$ though the difference $|i-j| \equiv t$. And since $|i-j| = |j-i|$ it follows that the covariance matrix $\Sigma^{(k)}$ satisfies
+\begin{equation}
+\Sigma^{(k)} = \begin{bmatrix}
+\gamma^{(k)}_{1,1} & \gamma^{(k)}_{1,2} & \cdots & \gamma^{(k)}_{1,n^{(k)}} \\
+\gamma^{(k)}_{2,1} & \gamma^{(k)}_{2,2} & \cdots &  \\
+\vdots & & \ddots \\
+\gamma^{(k)}_{n^{(k)},1} & \gamma^{(k)}_{n^{(k)},2} & \cdots & \gamma^{(k)}_{n^{(k)},n^{(k)}}
+\end{bmatrix} = 
+\begin{bmatrix}
+\gamma^{(k)}_{0} & \gamma^{(k)}_{1} & \cdots & \gamma^{(k)}_{n^{(k)}-1} \\
+\gamma^{(k)}_{1} & \gamma^{(k)}_{0} & \cdots &  \\
+\vdots & & \ddots \\
+\gamma^{(k)}_{n^{(k)}-1} & \gamma^{(k)}_{n^{(k)}-2} & \cdots & \gamma^{(k)}_{0}
+\end{bmatrix} \label{eq:subdiagonal}
+\end{equation}
+
+We want to evaluate the double sum of equation \eqref{eq:errorestimate}, which is the 
+sum of all the terms in $\Sigma^{(k)}$, but since by equation \eqref{eq:subdiagonal}, $\Sigma^{(k)}$ is $n-$diagonal, we can rewrite the double sum as a single sum over each of its diagonal like so:
+\begin{align*}
+\Var{\overline{X}^{(k)}_{n^{(k)}}} &\stackrel{\eqref{eq:errorestimate} }{=} \frac{1}{(n^{(k)})^2} \sum_{i=1}^{n^{(k)}} \sum_{j=1}^{n^{(k)}} \gamma_{i,j}^{(k)}  \stackrel{\eqref{eq:subdiagonal} }{=} \frac{1}{(n^{(k)})^2} \sum_{t=0}^{n^{(k)} - 1}  (n^{(k)} - t) \gamma_{t}^{(k)} \\
+&= \frac{\gamma_0^{(k)}}{n^{(k)}} + \frac{2}{n^{(k)}} \sum_{t=1}^{n^{(k)} - 1} \left( 1 - \frac{t}{n^{(k)}} \right)\gamma^{(k)}_t
+\end{align*}
+That means the only thing which remain is to show is $\Var{\overline{X}^{(k)}_{n^{(k)}}} = \Var{\overline{X}_{m}}$, which follows using induction using
+\begin{align*}
+\overline{X}^{(k+1)}_{n^{(k+1)}} &= \frac{1}{n^{(k+1)}} \sum_{i=1}^{n^{(k+1)}}X_i^{(k+1)} = \frac{1}{n^{(k)}/2} \sum_{i=1}^{n^{(k)}/2} \frac{1}{2} \left( X^{(k)}_{2i-1} + X^{(k)}_{2i} \right) \\
+&= \left( X_1^{(k)} + X_3^{(k)} + \cdots X_{n^{(k)} - 1}^{(k)} + X_2^{(k)} + X_4^{(k)} + \cdots X_{n^{(k)}}^{(k)} \right) = \overline{X}^{(k)}_{n^{(k)}}.
+\end{align*}
+This proves formula \eqref{eq:epsilon}, and the proposition follows.
+\end{proof}
+
+\begin{lemma*}
+Suppose $X$ and $Y$ are real random variables with finite variance, then
+\[
+| \cov (X,Y) |^2 \leq \cov (X,X) \cov (Y,Y)
+\]
+\end{lemma*}
+\begin{proof}
+The idea is to use the definition of covariance $(*)$ and Cauchy-Schwarz inequality $(**)$ to prove the lemma on a small set of random variables which does not neccesarrily contain $X$ and $Y$. We thereafter show that this suffices to prove the lemma for $X$ and $Y$. First we must acquire an inner product with respect to we apply Cauchy-Schwarz inequality. Suppose $\Omega$ denotes all real random variables with finite variance that are identified if and only if they are equal almost surely. Suppose $A,B,C \in \Omega$ and $a,b \in \mathbb{R}$ and define the a function $( \cdot, \cdot ) : \Omega \times \Omega \to \mathbb{R}$ by
+\begin{equation}
+(A,B) = \E{A B}. \label{eq:innerproduct}
+\end{equation}
+To see that $\big( \Omega, (\cdot,\cdot) \big)$ is an inner product space, note that
+\begin{align*}
+\text{Conjugate symmetry:} \qquad &(A,B) = \E{AB} = \E{BA} = \conj{ \E{BA}} = \conj{(B,A)} \\ 
+\text{Positivity:} \qquad &(A,A) = \E{A^2} = \Var A + \E{A}^2 \geq 0 \\ 
+&\qquad \qquad \qquad  =0 \quad \text{if and only if} \quad A=0 \quad \text{almost surely.}\\ 
+\text{Linearity:} \qquad &(aA + bB,C) = \E{(aA + bB)C} = a\E{AC} + b\E{BC} = a(A,C) + b(BC) &
+\end{align*}
+And so $( \cdot, \cdot )$ is an inner product on $\Omega$ by definition \parencite{mcdonald_course_2012}. \\
+\\
+Since $\Omega$ denotes all real random variables with finite variance that are identified if and only if they are equal almost surely, there exist some $A,B \in \Omega$ such that $A=X$ and $B=Y$ almost surely. Note that the lemma is true for $A,B$, just write
+\begin{align*}
+| \cov (A,B) |^2 &\stackrel{(*)}{=} | \E{(A - \E{A})(B - \E{B})} |^2 \stackrel{\eqref{eq:innerproduct}}{=} | (A-\E{A}, B-\E{B}) |^2 \\
+&\stackrel{(**)}{\leq}  (A-\E{A}, A-\E{A})(B-\E{B}, Y-\E{B}) \stackrel{(*)\eqref{eq:innerproduct}}{=} \cov (A,A) \cov (B,B)
+\end{align*}
+To see that the lemma is true for $X$ and $Y$ it suffices to see that $\cov (A,B) = \cov (X,Y)$, $\cov (A,A) = \cov (X,X)$ and $\cov (B,B) = \cov (Y,Y)$. Notice that since $A=X$ and $B=Y$ almost surely, then $Z = A-B $ satisfies $\p{Z=0} = 1$ and thus $\E{A} - \E{B} = 0$ ($\dagger$). Also 
+\[
+\{AB \neq XY\} \subseteq \{ A\neq X \} \cup \{ B \neq Y \} \quad \text{only if} \quad \p{AB \neq XY} \leq \p{A\neq X} + \p{X\neq Y} = 0 + 0 = 0. 
+\]
+If this is used in the definition of expectation,$\E{AB} = \E{XY}$ follows ($\ddagger$) \parencite{devore_modern_2012}. Therefore
+\[
+\cov (A,B) = \E{AB} - \E{A}\E{B} \stackrel{(\dagger)(\ddagger)}{=} \E{XY} - \E{X}\E{Y} = \cov (X,Y)
+\]
+The remaining equalities are proved similarly, and the lemma follows.
+\end{proof}
+\printbibliography
+\end{document}
