@@ -1,0 +1,7 @@
+Running
+
+$ Rscript tinker.bell.R
+
+in the /peter.pan/R directory will print the variance of the mean of the data in /peter.pan/resources/data.txt:
+
+[1] 1.542889e-05

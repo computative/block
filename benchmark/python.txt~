@@ -1,0 +1,7 @@
+Running
+
+$ python peter.pan.py 
+
+in the /peter.pan/python will print the variance of the mean of the data in /peter.pan/resources/data.txt:
+
+1.54288923592e-05
