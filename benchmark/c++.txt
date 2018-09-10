@@ -1,0 +1,6 @@
+In the ../c++/-directory, execute
+
+$ make
+$ ./blocker
+Expected value = 2.97804 (with mean sq. err. = 1.54289e-05) 
+Standard error = 0.00392796 (with mean sq. err. = 7.38097e-12) 
