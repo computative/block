@@ -14,7 +14,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = 
 CFLAGS        = -pipe -O2 -Wall -W -fPIC $(DEFINES)
-CXXFLAGS      = -pipe -std=c++17 -O3 -Wall -W -fPIC $(DEFINES)
+CXXFLAGS      = -pipe -std=c++17 -O2 -Wall -W -fPIC $(DEFINES)
 INCPATH       = -I../batchblock -I. -I/home/marius/Qt/5.7/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/marius/Qt/5.7/gcc_64/bin/qmake
 DEL_FILE      = rm -f
@@ -36,7 +36,7 @@ DISTNAME      = batchblock1.0.0
 DISTDIR = /home/marius/Dokumenter/master/blocking/peter.pan/blockbatch/source/build-batchblock-Desktop_Qt_5_7_0_GCC_64bit-Release/.tmp/batchblock1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
-LIBS          = $(SUBLIBS) -lstdc++fs 
+LIBS          = $(SUBLIBS) -lstdc++fs -pthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -48,8 +48,18 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../batchblock/main.cpp 
-OBJECTS       = main.o
+SOURCES       = ../batchblock/main.cpp \
+		../batchblock/jobmanager.cpp \
+		../batchblock/job_info.cpp \
+		../batchblock/file_info.cpp \
+		../batchblock/buffer.cpp \
+		../batchblock/blocker.cpp 
+OBJECTS       = main.o \
+		jobmanager.o \
+		job_info.o \
+		file_info.o \
+		buffer.o \
+		blocker.o
 DIST          = /home/marius/Qt/5.7/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/marius/Qt/5.7/gcc_64/mkspecs/common/unix.conf \
 		/home/marius/Qt/5.7/gcc_64/mkspecs/common/linux.conf \
@@ -194,7 +204,16 @@ DIST          = /home/marius/Qt/5.7/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/marius/Qt/5.7/gcc_64/mkspecs/features/exceptions.prf \
 		/home/marius/Qt/5.7/gcc_64/mkspecs/features/yacc.prf \
 		/home/marius/Qt/5.7/gcc_64/mkspecs/features/lex.prf \
-		../batchblock/batchblock.pro  ../batchblock/main.cpp
+		../batchblock/batchblock.pro jobmanager.h \
+		job_info.h \
+		file_info.h \
+		buffer.h \
+		blocker.h ../batchblock/main.cpp \
+		../batchblock/jobmanager.cpp \
+		../batchblock/job_info.cpp \
+		../batchblock/file_info.cpp \
+		../batchblock/buffer.cpp \
+		../batchblock/blocker.cpp
 QMAKE_TARGET  = batchblock
 DESTDIR       = 
 TARGET        = batchblock
@@ -540,8 +559,29 @@ compiler_clean:
 
 ####### Compile
 
-main.o: ../batchblock/main.cpp 
+main.o: ../batchblock/main.cpp ../batchblock/jobmanager.h \
+		../batchblock/file_info.h \
+		../batchblock/job_info.h \
+		../batchblock/buffer.h \
+		../batchblock/blocker.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../batchblock/main.cpp
+
+jobmanager.o: ../batchblock/jobmanager.cpp ../batchblock/jobmanager.h \
+		../batchblock/file_info.h \
+		../batchblock/job_info.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o jobmanager.o ../batchblock/jobmanager.cpp
+
+job_info.o: ../batchblock/job_info.cpp ../batchblock/job_info.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o job_info.o ../batchblock/job_info.cpp
+
+file_info.o: ../batchblock/file_info.cpp ../batchblock/file_info.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o file_info.o ../batchblock/file_info.cpp
+
+buffer.o: ../batchblock/buffer.cpp ../batchblock/buffer.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o buffer.o ../batchblock/buffer.cpp
+
+blocker.o: ../batchblock/blocker.cpp ../batchblock/blocker.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o blocker.o ../batchblock/blocker.cpp
 
 ####### Install
 

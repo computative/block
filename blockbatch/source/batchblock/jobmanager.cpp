@@ -119,7 +119,8 @@ void jobManager::set_row_count()
     }
     std::ifstream infile;
     std::string line;
-    unsigned int n, k = 0;
+    unsigned int n, k;
+    n = k = 0;
     // count total data and write to jobManager::files
     for (File_info& file : files)
     {
@@ -130,12 +131,12 @@ void jobManager::set_row_count()
             k++;
         infile.close();
         file.row_count = k;
-        //std::cout << k << " lines found" << std::endl;
         n += k;
     }
 
     // truncate row_count to base 2
-    jobManager::row_count = std::pow( 2, std::floor(std::log2(double(n)/double(jobManager::num_threads)) ) );
+    jobManager::row_count = jobManager::num_threads*std::pow( 2, std::floor(std::log2(double(n)/double(jobManager::num_threads)) ) );
+// correct the following line
     jobManager::N = jobManager::row_count;
     k = 0; bool TRUC_FLAG = false;
     for (File_info& file : files)

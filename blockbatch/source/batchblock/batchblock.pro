@@ -10,7 +10,8 @@ SOURCES += main.cpp \
     jobmanager.cpp \
     job_info.cpp \
     file_info.cpp \
-    buffer.cpp
+    buffer.cpp \
+    blocker.cpp
 #QMAKE_CXXFLAGS_RELEASE -= -O
 #QMAKE_CXXFLAGS_RELEASE -= -O1
 #QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -20,4 +21,5 @@ HEADERS += \
     jobmanager.h \
     job_info.h \
     file_info.h \
-    buffer.h
+    buffer.h \
+    blocker.h

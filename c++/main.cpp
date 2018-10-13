@@ -4,7 +4,7 @@
 
 int main(int, char *[])
 {
-    std::ifstream infile("../resources/data.txt");
+    std::ifstream infile("../resources/test/data1.txt");
     std::vector<double> x;
     std::string line;
     while(std::getline(infile,line)) x.push_back(strtod(line.c_str(),nullptr) );

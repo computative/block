@@ -52,12 +52,14 @@ SOURCES       = ../batchblock/main.cpp \
 		../batchblock/jobmanager.cpp \
 		../batchblock/job_info.cpp \
 		../batchblock/file_info.cpp \
-		../batchblock/buffer.cpp 
+		../batchblock/buffer.cpp \
+		../batchblock/blocker.cpp 
 OBJECTS       = main.o \
 		jobmanager.o \
 		job_info.o \
 		file_info.o \
-		buffer.o
+		buffer.o \
+		blocker.o
 DIST          = /home/marius/Qt/5.7/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/marius/Qt/5.7/gcc_64/mkspecs/common/unix.conf \
 		/home/marius/Qt/5.7/gcc_64/mkspecs/common/linux.conf \
@@ -206,11 +208,13 @@ DIST          = /home/marius/Qt/5.7/gcc_64/mkspecs/features/spec_pre.prf \
 		../batchblock/batchblock.pro jobmanager.h \
 		job_info.h \
 		file_info.h \
-		buffer.h ../batchblock/main.cpp \
+		buffer.h \
+		blocker.h ../batchblock/main.cpp \
 		../batchblock/jobmanager.cpp \
 		../batchblock/job_info.cpp \
 		../batchblock/file_info.cpp \
-		../batchblock/buffer.cpp
+		../batchblock/buffer.cpp \
+		../batchblock/blocker.cpp
 QMAKE_TARGET  = batchblock
 DESTDIR       = 
 TARGET        = batchblock
@@ -560,7 +564,9 @@ compiler_clean:
 
 main.o: ../batchblock/main.cpp ../batchblock/jobmanager.h \
 		../batchblock/file_info.h \
-		../batchblock/job_info.h
+		../batchblock/job_info.h \
+		../batchblock/buffer.h \
+		../batchblock/blocker.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../batchblock/main.cpp
 
 jobmanager.o: ../batchblock/jobmanager.cpp ../batchblock/jobmanager.h \
@@ -576,6 +582,9 @@ file_info.o: ../batchblock/file_info.cpp ../batchblock/file_info.h
 
 buffer.o: ../batchblock/buffer.cpp ../batchblock/buffer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o buffer.o ../batchblock/buffer.cpp
+
+blocker.o: ../batchblock/blocker.cpp ../batchblock/blocker.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o blocker.o ../batchblock/blocker.cpp
 
 ####### Install
 
