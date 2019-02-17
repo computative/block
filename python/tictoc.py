@@ -6,7 +6,7 @@ def block(x):
     # preliminaries
     d = log2(len(x))
     if (d - floor(d) != 0):
-        print("Warning: Data size = %g, is not a power of 2." % 2**d)
+        print("Warning: Data size = %g, is not a power of 2." % floor(2**d))
         print("Truncating data to %g." % 2**floor(d) )
         x = x[:2**int(floor(d))]
     d = int(floor(d))
