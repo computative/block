@@ -1,5 +1,5 @@
 from numpy import log2, zeros, mean, var, sum, loadtxt, arange, \
-                   array, cumsum, dot, transpose, diagonal, floor
+                  array, cumsum, dot, transpose, diagonal, floor
 from numpy.linalg import inv
 
 def block(x):
