@@ -1,10 +1,15 @@
-from numpy import log2, zeros, mean, var, sum, loadtxt, arange, array, cumsum, dot, transpose, diagonal
+from numpy import log2, zeros, mean, var, sum, loadtxt, arange, array, cumsum, dot, transpose, diagonal, floor
 from numpy.linalg import inv
 
 def block(x):
     # preliminaries
-    n = len(x)
-    d = int(log2(n))
+    d = log2(len(x))
+    if (d - floor(d) != 0):
+        print("Warning: Data size = %g, is not a power of 2." % 2**d)
+        print("Truncating data to %g." % 2**floor(d) )
+        d = int(floor(d))
+        x = x[:2**d]
+    n = 2**d
     s, gamma = zeros(d), zeros(d)
     mu = mean(x)
 
