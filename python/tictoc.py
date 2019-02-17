@@ -4,7 +4,7 @@ from numpy.linalg import inv
 def block(x):
     # preliminaries
     n = len(x)
-    d = log2(n)
+    d = int(log2(n))
     s, gamma = zeros(d), zeros(d)
     mu = mean(x)
 
@@ -30,9 +30,9 @@ def block(x):
         if(M[k] < q[k]):
             break
     if (k >= d-1):
-        print "Warning: Use more data"
+        print("Warning: Use more data")
     return s[k]/2**(d-k)
 
 
 x = loadtxt("../resources/data.txt")
-print block(x)
+print(block(x))
