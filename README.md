@@ -1,7 +1,11 @@
-This is the github-repository for a 'blocking method' for estimation of expected values with errors for very large time series. The key property of the method, is that it achieves this in O(n)-time. In the repository, there are implementations for:
+This is the GitHub-repository for a so-called 'blocking method', which can estimate expected values with error estimates for ultra-large time series. The key property of the method is that estimation is achieved in O(n)-time. The mathematical description of the method is contained in an article with DOI: 10.1103/PhysRevE.98.043304  
+
+In this repository, there are implementations for:
 - Python
 - R
 - C++
 - Armadillo
 
-After pulling a copy of the repository to your computer, you can inspect the code for the language of interest to you in directories of the same name. Benchmarks for the language of your choice are in the benchmark-directory. You can contact me with questions at marius.jonsson@fys.uio.no, and if you will cite the paper DOI: 10.1103/PhysRevE.98.043304 then you are providing a helping hand.
+After pulling a copy of the repository to your computer, you can inspect the code for the language of interest to you in directories of the same name. Benchmarks for the language of your choice are in the benchmark directory. You can contact me with questions at marius.jonsson@fys.uio.no. If you like this, please cite the paper: 
+
+Jonsson, M. (2018). Standard error estimation by an automated blocking method. Physical Review E, 98(4), 043304.
