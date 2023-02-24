@@ -7,6 +7,6 @@ In this repository, there are implementations for:
 - Armadillo
 - Julia
 
-After pulling a copy of the repository to your work space, you can inspect the code for the language of interest to you in directories of the same name. Benchmarks for the language of your choice are in the benchmark directory. You can contact me with questions at marius.jonsson@fys.uio.no. As you can see, thanks to collegues in Oslo, there's a julia implementation. If you like this, please star, tell your friends and cite the paper: 
+After pulling a copy of the repository to your work space, you can inspect the code for the language of interest to you in directories of the same name. Benchmarks for the language of your choice are in the benchmark directory. You can contact me with questions at marius.jonsson@fys.uio.no. As you can see, with thanks to collegues in Oslo, there's a julia implementation. If you like it, please star, tell your friends and cite the paper: 
 
 Jonsson, M. (2018). Standard error estimation by an automated blocking method. Physical Review E, 98(4), 043304.
