@@ -5,6 +5,7 @@ In this repository, there are implementations for:
 - R
 - C++
 - Armadillo
+- Julia
 
 After pulling a copy of the repository to your work space, you can inspect the code for the language of interest to you in directories of the same name. Benchmarks for the language of your choice are in the benchmark directory. You can contact me with questions at marius.jonsson@fys.uio.no. If you like this, please star and cite the paper: 
 
