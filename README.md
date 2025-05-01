@@ -3,7 +3,7 @@ This is the GitHub-repository for a so-called 'blocking method', which can estim
 
 ### How to cite
 
-- Jonsson, M. (2018). Standard error estimation by an automated blocking method. Physical Review E, 98(4), 043304.
+- Jonsson, M. (2018). *Standard error estimation by an automated blocking method*. Physical Review E, 98(4), 043304.
 - [RIS](https://github.com/computative/block/blob/master/block.ris)
 - [BibTeX](https://github.com/computative/block/blob/master/block.bib)
 
@@ -18,4 +18,4 @@ In this repository, there are implementations for:
 
 After pulling a copy of the repository to your work space, you can inspect the code for the language of interest to you in directories of the same name. Benchmarks for the language of your choice are in the benchmark directory. You can contact me with questions at mj539@cam.ac.uk. As you can see, with thanks to collegues in Oslo, Karl Henrik, there's julia support now. If you like it, please star, tell your friends and cite the paper: 
 
-Jonsson, M. (2018). Standard error estimation by an automated blocking method. Physical Review E, 98(4), 043304.
+Jonsson, M. (2018). *Standard error estimation by an automated blocking method*. Physical Review E, 98(4), 043304.
